@@ -19,15 +19,15 @@ COPY ["MarketAnalysisBackend.csproj", "."]
 RUN dotnet restore "./MarketAnalysisBackend.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./MarketAnalysisBackend.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "MarketAnalysisBackend.csproj" -c Release -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MarketAnalysisBackend.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "MarketAnalysisBackend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MarketAnalysisBackend.dll"]
