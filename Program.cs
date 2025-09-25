@@ -58,6 +58,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAngular");
 
+app.MapGet("/ping", () => "pong");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
